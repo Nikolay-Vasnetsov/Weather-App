@@ -12,7 +12,7 @@ def get_api_key():
 def get_weather_result(city, api_key):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={api_key}"
     r = requests.post(url)
-    return r.text
+    return r.json()
 
 
 @app.route('/')
@@ -25,8 +25,11 @@ def add_city():
     city_name = request.form["city"]
     api_key = get_api_key()
     data = get_weather_result(city_name, api_key)
-    #temp = data["main"]["temp"]
-    return data
+    temp = "{0:.2f}".format(data["main"]["temp"])
+    location = data["name"]
+    sky = data["weather"][0]["main"]
+    dict_with_weather_info = {"location": location, "temp": temp, "weather": sky}
+    return render_template("index.html", weather=dict_with_weather_info)
 
 
 if __name__ == '__main__':
