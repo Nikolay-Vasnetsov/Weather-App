@@ -20,8 +20,8 @@
     </div>
     {% endif %}
     {% endwith %}
-    <form action="/" method="POST">
-        <input type="text" placeholder="Enter a city name" name="city_name" id="input-city">
+    <form action="{{ url_for('add_city') }}" method="POST">
+        <input type="text" placeholder="Enter a city name" name="city" id="input-city">
         <button type="submit" class="submit-button">Add</button>
     </form>
 </div>
