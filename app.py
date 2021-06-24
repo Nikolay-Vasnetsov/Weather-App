@@ -28,8 +28,7 @@ def add_city():
     temp = "{0:.2f}".format(data["main"]["temp"])
     location = data["name"]
     sky = data["weather"][0]["main"]
-    dict_with_weather_info = {"location": location, "temp": temp, "weather": sky}
-    return render_template("index.html", weather=dict_with_weather_info)
+    return render_template("add.html", temp=temp, location=location, sky=sky)
 
 
 if __name__ == '__main__':

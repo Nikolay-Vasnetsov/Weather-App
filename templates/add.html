@@ -1,1 +1,15 @@
 {% extends "index.html" %}
+
+{% block newcard %}
+    <div class="card night">
+        <div class="delete-wrapper">
+            <form action="#" method="POST">
+                <input type="hidden" name="id" value="">
+                <button class="delete-button" type="submit">&#10006;</button>
+            </form>
+        </div>
+        <div class="degrees"><span>{{ temp }}<span class="celsius"> °C</span></span></div>
+        <div class="state">{{ sky }}</div>
+        <div class="city">{{ location }}</div>
+    </div>
+{% endblock %}
