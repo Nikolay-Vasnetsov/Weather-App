@@ -4,15 +4,14 @@ import requests
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///weather.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
 class City(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     name = db.Column(db.String(30), unique=True, nullable=False)
-
 
 
 def get_api_key():
@@ -32,13 +31,16 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add_city():
-    city_name = request.form["city"]
-    api_key = get_api_key()
-    data = get_weather_result(city_name, api_key)
-    temp = round(data["main"]["temp"])
-    location = data["name"]
-    sky = data["weather"][0]["main"]
-    return render_template("add.html", temp=temp, location=location, sky=sky)
+    db.session.add(City(name=request.form["city"]))
+    db.session.commit()
+    return render_template("index.html")
+
+    # api_key = get_api_key()
+    # data = get_weather_result(city_name, api_key)
+    # temp = round(data["main"]["temp"])
+    # location = data["name"]
+    # sky = data["weather"][0]["main"]
+    # return render_template("add.html", temp=temp, location=location, sky=sky)
 
 
 if __name__ == '__main__':
