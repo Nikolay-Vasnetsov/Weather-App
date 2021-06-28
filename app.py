@@ -1,8 +1,18 @@
 from flask import Flask, render_template, request
 import sys
 import requests
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+
+class City(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True, nullable=False)
+
 
 
 def get_api_key():
@@ -25,7 +35,7 @@ def add_city():
     city_name = request.form["city"]
     api_key = get_api_key()
     data = get_weather_result(city_name, api_key)
-    temp = "{0:.2f}".format(data["main"]["temp"])
+    temp = round(data["main"]["temp"])
     location = data["name"]
     sky = data["weather"][0]["main"]
     return render_template("add.html", temp=temp, location=location, sky=sky)
