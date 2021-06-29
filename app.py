@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 import sys
 import requests
 from flask_sqlalchemy import SQLAlchemy
@@ -9,9 +9,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-class City(db.Model):
+class city(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     name = db.Column(db.String(30), unique=True, nullable=False)
+    temp = db.Column(db.Integer, nullable=False)
+    weather = db.Column(db.String(30), nullable=False)
+
+    def __repr__(self):
+        return {"name": self.name, "temp": self.temp, "weather": self.weather}
+db.create_all()
 
 
 def get_api_key():
@@ -26,21 +32,21 @@ def get_weather_result(city, api_key):
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    list_of_cities = city.query.all()
+    return render_template("index.html", list_of_cities=list_of_cities)
 
 
 @app.route('/add', methods=['POST'])
 def add_city():
-    db.session.add(City(name=request.form["city"]))
+    api_key = get_api_key()
+    city_name = request.form["city"]
+    data = get_weather_result(city_name, api_key)
+    temp = round(data["main"]["temp"])
+    sky = data["weather"][0]["main"]
+    info = city(name=city_name, temp=temp, weather=sky)
+    db.session.add(info)
     db.session.commit()
-    return render_template("index.html")
-
-    # api_key = get_api_key()
-    # data = get_weather_result(city_name, api_key)
-    # temp = round(data["main"]["temp"])
-    # location = data["name"]
-    # sky = data["weather"][0]["main"]
-    # return render_template("add.html", temp=temp, location=location, sky=sky)
+    return redirect(url_for("index"))
 
 
 if __name__ == '__main__':

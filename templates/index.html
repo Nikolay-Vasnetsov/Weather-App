@@ -26,6 +26,20 @@
     </form>
 </div>
 <div class="cards">
+    {% for city in list_of_cities %}
+        <div class="card day">
+            <div class="delete-wrapper">
+                <form action="#" method="POST">
+                    <input type="hidden" name="id" value="">
+                    <button class="delete-button" type="submit">&#10006;</button>
+                </form>
+            </div>
+            <div class="degrees"><span>{{ city["temp"] }}<span class="celsius"> °C</span></span></div>
+            <div class="state">{{ city["weather"] }}</div>
+            <div class="empty"></div>
+            <div class="city">{{ city["name"].upper() }}</div>
+        </div>
+    {%- endfor %}
 </div>
 </body>
 </html>
