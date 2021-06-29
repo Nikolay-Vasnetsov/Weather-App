@@ -29,8 +29,8 @@
     {% for city in list_of_cities %}
         <div class="card day">
             <div class="delete-wrapper">
-                <form action="#" method="POST">
-                    <input type="hidden" name="id" value="">
+                <form action="{{ url_for('delete') }}" method="POST">
+                    <input type="hidden" name="id" value="{{ city['id'] }}">
                     <button class="delete-button" type="submit">&#10006;</button>
                 </form>
             </div>

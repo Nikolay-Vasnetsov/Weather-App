@@ -16,7 +16,7 @@ class city(db.Model):
     weather = db.Column(db.String(30), nullable=False)
 
     def __repr__(self):
-        return {"name": self.name, "temp": self.temp, "weather": self.weather}
+        return {"name": self.name, "temp": self.temp, "weather": self.weather, "id": self.id}
 db.create_all()
 
 
@@ -40,13 +40,26 @@ def index():
 def add_city():
     api_key = get_api_key()
     city_name = request.form["city"]
-    data = get_weather_result(city_name, api_key)
-    temp = round(data["main"]["temp"])
-    sky = data["weather"][0]["main"]
-    info = city(name=city_name, temp=temp, weather=sky)
-    db.session.add(info)
+    try:
+        data = get_weather_result(city_name, api_key)
+    except Exception:
+        return render_template("index.html", message=True)
+    else:
+        temp = round(data["main"]["temp"])
+        sky = data["weather"][0]["main"]
+        info = city(name=city_name, temp=temp, weather=sky)
+        db.session.add(info)
+        db.session.commit()
+        return redirect(url_for("index"))
+
+
+@app.route('/delete', methods=['GET', 'POST'])
+def delete():
+    city_id = request.form["id"]
+    _city = city.query.filter_by(id=city_id).first()
+    db.session.delete(_city)
     db.session.commit()
-    return redirect(url_for("index"))
+    return redirect('/')
 
 
 if __name__ == '__main__':
